@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Messages — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="chat">
+      <!-- Left: conversations -->
+      <aside class="chat__left">
+        <div class="chat__leftHead">
+          <h2>Messages</h2>
+          <a class="btn btn--ghost btn--sm" href="/profiles/">+ Nouveau</a>
+        </div>
+
+        <div class="chat__list">
+          {% for c in convos %}
+            <a class="chat__item {% if c.id == convo.id %}is-active{% endif %}"
+               href="{% url 'messages_conversation' c.id %}">
+              <div class="chat__avatar">🐾</div>
+              <div>
+                <div class="chat__name">Conversation #{{ c.id }}</div>
+                <div class="muted tiny">Clique pour ouvrir</div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </aside>
+
+      <!-- Right: conversation -->
+      <main class="chat__right">
+        <div class="chat__top">
+          <div>
+            <div class="chat__title">
+              {% if other %}Discussion avec <b>{{ other.username }}</b>{% else %}Discussion{% endif %}
+            </div>
+            <div class="muted tiny">Conversation #{{ convo.id }}</div>
+          </div>
+
+          {% if other %}
+            <a class="btn btn--ghost btn--sm" href="{% url 'profile_detail' other.id %}">Voir profil</a>
+          {% endif %}
+        </div>
+
+        <div class="chat__messages">
+          {% for m in msgs %}
+            <div class="bubble {% if m.sender_id == request.user.id %}bubble--me{% else %}bubble--them{% endif %}">
+              <div class="bubble__meta">
+                <b>{% if m.sender_id == request.user.id %}Moi{% else %}{{ m.sender.username }}{% endif %}</b>
+                <span class="muted tiny">{{ m.timestamp }}</span>
+              </div>
+              <div class="bubble__text">{{ m.content }}</div>
+            </div>
+          {% empty %}
+            <div class="muted">Aucun message. Dis bonjour 👋</div>
+          {% endfor %}
+        </div>
+
+        <form class="chat__composer" method="POST">
+          {% csrf_token %}
+          <input name="content" placeholder="Écrivez un message..." autocomplete="off" />
+          <button class="btn btn--blue" type="submit">Envoyer</button>
+        </form>
+
+        {% if messages %}
+          <div class="flash">
+            {% for msg in messages %}
+              <div class="flash__item">{{ msg }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </main>
+    </div>
+  </div>
+</section>
+{% endblock %}
