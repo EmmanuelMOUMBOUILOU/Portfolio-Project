@@ -347,13 +347,13 @@ Commit messages follow conventional format:
 Clone the repository:
 
 ```
-git clone https://github.com/your-username/amis-des-animaux.git
+git clone https://github.com/EmmanuelMOUMBOUILOU/Portfolio-Project.git
 ```
 
 Navigate into the project:
 
 ```
-cd amis-des-animaux
+cd amis_animaux
 ```
 
 Create virtual environment:
