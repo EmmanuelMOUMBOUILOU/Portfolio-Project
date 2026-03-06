@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Connexion — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="container auth__inner">
+    <div class="auth__card">
+      <h1>Connexion</h1>
+      <p class="muted">Retrouve tes matchs et discute 🐾</p>
+
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div class="flash__item">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" class="auth__form">
+        {% csrf_token %}
+        <label>
+          <span>Username</span>
+          <input name="username" placeholder="ex: sophie" required />
+        </label>
+
+        <label>
+          <span>Mot de passe</span>
+          <input name="password" type="password" placeholder="••••••••" required />
+        </label>
+
+        <button class="btn btn--blue auth__btn" type="submit">Se connecter</button>
+      </form>
+
+      <div class="auth__footer">
+        <span class="muted">Pas encore de compte ?</span>
+        <a class="link" href="{% url 'register' %}">Créer un compte</a>
+      </div>
+    </div>
+
+    <div class="auth__side">
+      <div class="side-card side-card--soft">
+        <h3>Pourquoi s’inscrire ?</h3>
+        <p class="muted">
+          Crée ton profil maître + animal, trouve des profils compatibles, et discute.
+        </p>
+      </div>
+      <div class="side-card">
+        <h3>Astuce</h3>
+        <p class="muted">Ajoute une photo et ta ville pour apparaître dans “Profils Populaires”.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
