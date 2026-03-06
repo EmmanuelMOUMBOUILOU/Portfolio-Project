@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Inscription — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="auth">
+  <div class="container auth__inner">
+    <div class="auth__card">
+      <h1>Inscription</h1>
+      <p class="muted">Rejoins la communauté des amoureux des animaux ❤️</p>
+
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div class="flash__item">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" class="auth__form">
+        {% csrf_token %}
+        <label>
+          <span>Username</span>
+          <input name="username" placeholder="ex: thomas" required />
+        </label>
+
+        <label>
+          <span>Email (optionnel)</span>
+          <input name="email" type="email" placeholder="ex: thomas@mail.com" />
+        </label>
+
+        <label>
+          <span>Mot de passe</span>
+          <input name="password1" type="password" placeholder="min 6 caractères" required />
+        </label>
+
+        <label>
+          <span>Confirmer mot de passe</span>
+          <input name="password2" type="password" placeholder="répéter" required />
+        </label>
+
+        <button class="btn btn--pink auth__btn" type="submit">Créer mon compte</button>
+      </form>
+
+      <div class="auth__footer">
+        <span class="muted">Déjà un compte ?</span>
+        <a class="link" href="{% url 'login' %}">Se connecter</a>
+      </div>
+    </div>
+
+    <div class="auth__side">
+      <div class="side-card side-card--soft">
+        <h3>Après l’inscription</h3>
+        <p class="muted">
+          Tu pourras compléter ton profil (âge, ville, bio) et ajouter ton animal.
+        </p>
+        <a class="btn btn--blue btn--sm" href="/profiles/">Voir les profils</a>
+      </div>
+      <div class="side-card">
+        <h3>Sécurité</h3>
+        <p class="muted">Django stocke les mots de passe de façon sécurisée (hash).</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
