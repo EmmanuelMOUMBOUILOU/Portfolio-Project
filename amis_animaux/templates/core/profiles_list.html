@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load dict_extras %}
+{% block title %}Profils — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Recherches de Profils</h1>
+    <p class="muted">Filtre par ville, espèce et âge du maître.</p>
+
+    <form class="filters" method="GET" action="/profiles/">
+      <input name="q" value="{{ q }}" placeholder="Nom / bio..." />
+      <input name="location" value="{{ location }}" placeholder="Ville (ex: Paris)" />
+      <input name="species" value="{{ species }}" placeholder="Espèce (Dog, Cat...)" />
+      <input name="age_min" value="{{ age_min }}" placeholder="Âge maître min" />
+      <input name="age_max" value="{{ age_max }}" placeholder="Âge maître max" />
+      <button class="btn btn--blue" type="submit">Rechercher</button>
+      <a class="btn btn--ghost" href="/profiles/">Reset</a>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cards">
+      {% for u in page_obj.object_list %}
+        {% with a=u.animals.all.0 %}
+        <article class="card">
+          <div class="card__img">
+            {% if u.profile.avatar %}
+              <img src="{{ u.profile.avatar.url }}" alt="avatar">
+            {% else %}
+              <div class="card__imgFallback">🐾</div>
+            {% endif %}
+          </div>
+
+          <div class="card__body">
+            <div class="card__name">
+              {{ u.username }}
+              {% if u.profile.age %}<span class="muted">• {{ u.profile.age }} ans</span>{% endif %}
+              {% if u.profile.location %}<span class="muted">• {{ u.profile.location }}</span>{% endif %}
+            </div>
+
+            {% if a %}
+              <div class="card__pet">
+                <span class="tag">{{ a.name }}</span>
+                <span class="tag tag--soft">{{ a.species }}</span>
+                <span class="tag tag--soft">{{ a.age }} ans</span>
+              </div>
+            {% endif %}
+
+            <div class="card__actions">
+              <a class="btn btn--ghost btn--sm" href="{% url 'profile_detail' u.id %}">
+                Voir profil
+              </a>
+
+              {# ❤️ BOUTON AVEC STATUT INTELLIGENT #}
+              {% if request.user.is_authenticated and request.user.id != u.id %}
+
+                {% with status=sent_matches|get_item:u.id %}
+
+                  {% if status == "accepted" %}
+                    <button class="heart-btn heart-accepted" disabled>
+                      Match accepté ❤️
+                    </button>
+
+                  {% elif status == "rejected" %}
+                    <button class="heart-btn heart-rejected" disabled>
+                      Refusé ❌
+                    </button>
+
+                  {% elif status == "pending" %}
+                    <button class="heart-btn heart-pending" disabled>
+                      Envoyé ⏳
+                    </button>
+
+                  {% else %}
+                    <button
+                      class="heart-btn"
+                      type="button"
+                      data-user-id="{{ u.id }}"
+                      title="Envoyer une demande"
+                    >
+                      ❤
+                    </button>
+                  {% endif %}
+
+                {% endwith %}
+
+              {% else %}
+                <button
+                  class="heart-btn"
+                  type="button"
+                  disabled
+                  title="Connecte-toi pour envoyer une demande"
+                >
+                  ❤
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+        {% endwith %}
+      {% empty %}
+        <div class="empty">
+          <h3>Aucun résultat</h3>
+          <p class="muted">Change tes filtres ou ajoute des profils via l’admin.</p>
+          <a class="btn" href="/admin/">Admin</a>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a class="btn btn--ghost btn--sm"
+             href="?page={{ page_obj.previous_page_number }}&q={{ q }}&location={{ location }}&species={{ species }}&age_min={{ age_min }}&age_max={{ age_max }}">←</a>
+        {% endif %}
+
+        <span class="muted">
+          Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+          <a class="btn btn--ghost btn--sm"
+             href="?page={{ page_obj.next_page_number }}&q={{ q }}&location={{ location }}&species={{ species }}&age_min={{ age_min }}&age_max={{ age_max }}">→</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ❤️ JS AJAX -->
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    const csrftoken = getCookie("csrftoken");
+
+    async function sendMatch(userId) {
+      const res = await fetch(`/ajax/match/${userId}/`, {
+        method: "POST",
+        headers: { "X-CSRFToken": csrftoken },
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Erreur lors de l’envoi.");
+      }
+
+      return data;
+    }
+
+    document.querySelectorAll(".heart-btn").forEach((btn) => {
+
+      if (btn.disabled) return;
+
+      btn.addEventListener("click", async () => {
+        const userId = btn.dataset.userId;
+
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = "...";
+
+        try {
+          const data = await sendMatch(userId);
+
+          btn.classList.add("heart-pending");
+          btn.textContent = "Envoyé ⏳";
+          btn.disabled = true;
+        } catch (err) {
+          btn.textContent = originalText;
+          btn.disabled = false;
+          alert(err.message || "Erreur réseau");
+        }
+      });
+    });
+  </script>
+</section>
+{% endblock %}
