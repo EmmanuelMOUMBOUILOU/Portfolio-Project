@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Accueil — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg" style="background-image:url('{% static "img/hero.jpg" %}');"></div>
+
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <h1>Rencontrez des célibataires<br>qui <span>aiment les animaux</span></h1>
+      <p class="hero__subtitle">
+        Trouvez l’amour aux côtés de ceux qui aiment les animaux autant que vous !
+      </p>
+
+      <div class="hero__cta">
+        <a class="btn btn--pink" href="/register/">Inscription gratuite</a>
+        <a class="btn btn--blue" href="#profiles">Recherche de profils</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container features">
+    <div class="feature">
+      <div class="feature__icon feature__icon--blue">👤</div>
+      <h3>Créez votre profil</h3>
+      <p>Ajoutez votre bio, votre ville, et le profil de votre compagnon.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature__icon feature__icon--pink">❤</div>
+      <h3>Rencontrez des passionnés</h3>
+      <p>Découvrez des profils compatibles selon espèce & localisation.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature__icon feature__icon--orange">🧡</div>
+      <h3>Partagez votre amour</h3>
+      <p>Discutez et organisez une balade ou une rencontre au parc.</p>
+    </div>
+  </div>
+</section>
+
+<section id="profiles" class="section">
+  <div class="container">
+    <div class="section__head">
+      <h2>Profils Populaires</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="cards">
+      {% for u in popular %}
+        {% with a=u.animals.all.0 %}
+        <article class="card">
+          <div class="card__img">
+            {% if u.profile.avatar %}
+              <img src="{{ u.profile.avatar.url }}" alt="avatar">
+            {% else %}
+              <div class="card__imgFallback">🐾</div>
+            {% endif %}
+          </div>
+
+          <div class="card__body">
+            <div class="card__name">
+              {{ u.username }}
+              {% if u.profile.location %}<span class="muted">• {{ u.profile.location }}</span>{% endif %}
+            </div>
+
+            {% if a %}
+              <div class="card__pet">
+                <span class="tag">{{ a.name }}</span>
+                <span class="tag tag--soft">{{ a.species }}</span>
+                <span class="tag tag--soft">{{ a.age }} ans</span>
+              </div>
+            {% endif %}
+
+            <div class="card__actions">
+              <a class="btn btn--ghost btn--sm" href="{% url 'profile_detail' u.id %}">Voir profil</a>
+              <button class="btn btn--sm" disabled>❤</button>
+            </div>
+          </div>
+        </article>
+        {% endwith %}
+      {% empty %}
+        <div class="empty">
+          <h3>Aucun profil</h3>
+          <p class="muted">Ajoute des utilisateurs + animaux dans /admin/</p>
+          <a class="btn" href="/admin/">Aller à l’admin</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
