@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Profil — {{ u.username }}{% endblock %}
+
+{% block content %}
+<section class="profile-hero">
+  <div class="container profile-hero__inner">
+    <div class="profile-hero__card">
+      <div class="profile-hero__top">
+        <div class="profile-avatar">
+          {% if u.profile.avatar %}
+            <img src="{{ u.profile.avatar.url }}" alt="avatar">
+          {% else %}
+            <div class="profile-avatar__fallback">🐾</div>
+          {% endif %}
+        </div>
+
+        <div class="profile-title">
+          <h1>
+            {{ u.username }}
+            {% if u.profile.age %}, {{ u.profile.age }} ans{% endif %}
+          </h1>
+          <div class="profile-meta">
+            {% if u.profile.location %}<span>📍 {{ u.profile.location }}</span>{% endif %}
+            {% if u.animals.all.0 %}<span>🐶 {{ u.animals.all.0.species }}</span>{% endif %}
+            {% if u.profile.age %}<span>🎂 {{ u.profile.age }} ans</span>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-box">
+        <h3>À propos de moi</h3>
+        <p class="muted">{{ u.profile.bio|default:"(Pas encore de bio)" }}</p>
+      </div>
+
+      <div class="profile-box">
+        <h3>Mes Animaux</h3>
+        <div class="pets">
+          {% for a in u.animals.all %}
+            <div class="pet">
+              <div class="pet__img">🐾</div>
+              <div>
+                <div class="pet__name">{{ a.name }}</div>
+                <div class="muted">{{ a.species }} • {{ a.age }} ans</div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="muted">Aucun animal.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        {% if request.user.is_authenticated and request.user.id != u.id %}
+          <form method="POST" action="{% url 'send_match' u.id %}">
+            {% csrf_token %}
+            <button class="btn btn--pink" type="submit">
+              ❤ Envoyer une demande
+            </button>
+          </form>
+
+          <!-- ✅ Nouveau : ouvrir (ou créer) une conversation -->
+          <a class="btn btn--blue" href="{% url 'start_conversation' u.id %}">
+            💬 Envoyer un message
+          </a>
+
+          {% if existing_match %}
+            <div class="pill">
+              Statut: {{ existing_match.status }}
+            </div>
+          {% endif %}
+        {% else %}
+          <a class="btn btn--ghost" href="/profiles/">← Retour</a>
+        {% endif %}
+
+        <a class="btn btn--ghost" href="/profiles/">Voir d’autres profils</a>
+      </div>
+
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div class="flash__item">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="profile-hero__side">
+      <div class="side-card">
+        <h3>Conseil</h3>
+        <p class="muted">Ajoute une bio + une ville + au moins un animal pour apparaître dans les profils populaires.</p>
+      </div>
+
+      <div class="side-card side-card--soft">
+        <h3>Match</h3>
+        <p class="muted">Tu pourras brancher la messagerie juste après l’acceptation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
