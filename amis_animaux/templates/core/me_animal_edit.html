@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Modifier animal{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="auth__card" style="max-width:680px;margin:0 auto;">
+      <h1>Modifier l’animal</h1>
+
+      <form method="POST" class="auth__form">
+        {% csrf_token %}
+
+        <label>
+          <span>Nom</span>
+          {{ form.name }}
+        </label>
+
+        <label>
+          <span>Espèce</span>
+          {{ form.species }}
+        </label>
+
+        <label>
+          <span>Âge</span>
+          {{ form.age }}
+        </label>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn--blue">Enregistrer</button>
+          <a class="btn btn--ghost" href="{% url 'me_profile' %}">Annuler</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
