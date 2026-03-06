@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Ajouter un animal — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="auth__card" style="max-width:680px;margin:0 auto;">
+      <h1>Ajouter un animal</h1>
+      <p class="muted">Ajoute ton compagnon pour matcher plus facilement 🐶🐱</p>
+
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div class="flash__item">{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" class="auth__form">
+        {% csrf_token %}
+
+        <label>
+          <span>Nom</span>
+          {{ form.name }}
+          {% for e in form.name.errors %}<div class="err">{{ e }}</div>{% endfor %}
+        </label>
+
+        <label>
+          <span>Espèce</span>
+          {{ form.species }}
+          {% for e in form.species.errors %}<div class="err">{{ e }}</div>{% endfor %}
+        </label>
+
+        <label>
+          <span>Âge</span>
+          {{ form.age }}
+          {% for e in form.age.errors %}<div class="err">{{ e }}</div>{% endfor %}
+        </label>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+          <button class="btn btn--blue" type="submit">Ajouter</button>
+          <a class="btn btn--ghost" href="{% url 'me_profile' %}">← Retour</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
