@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}C’est un Match ! — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="match">
+  <div class="match__bg"></div>
+  <div class="container">
+    <div class="match__card">
+      <h1>C’est un Match !</h1>
+      <div class="match__sparkle"></div>
+
+      <div class="match__pair">
+        <div class="match__person">
+          <div class="match__photo">
+            {% if u1.profile.avatar %}
+              <img src="{{ u1.profile.avatar.url }}" alt="avatar">
+            {% else %}
+              <div class="match__fallback">🐾</div>
+            {% endif %}
+          </div>
+          <div class="match__name">{{ u1.username }}</div>
+        </div>
+
+        <div class="match__heart animate-heart">❤</div>
+
+        <div class="match__person">
+          <div class="match__photo">
+            {% if u2.profile.avatar %}
+              <img src="{{ u2.profile.avatar.url }}" alt="avatar">
+            {% else %}
+              <div class="match__fallback">🐾</div>
+            {% endif %}
+          </div>
+          <div class="match__name">{{ u2.username }}</div>
+        </div>
+      </div>
+
+      <p class="muted">Vous aimez tous les deux les animaux !</p>
+
+      <div class="match__actions">
+        {% if request.user.is_authenticated %}
+          {% if request.user.id == u1.id %}
+            <a class="btn btn--blue" href="{% url 'start_conversation' u2.id %}">Envoyer un message</a>
+          {% else %}
+            <a class="btn btn--blue" href="{% url 'start_conversation' u1.id %}">Envoyer un message</a>
+          {% endif %}
+        {% endif %}
+        <a class="btn btn--pink" href="/profiles/">Continuer à matcher</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
