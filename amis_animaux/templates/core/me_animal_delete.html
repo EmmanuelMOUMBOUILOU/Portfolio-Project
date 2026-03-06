@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Supprimer animal{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="auth__card" style="max-width:600px;margin:0 auto;text-align:center;">
+      <h2>Supprimer {{ animal.name }} ?</h2>
+      <p class="muted">
+        Cette action est irréversible.
+      </p>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn--pink">Oui, supprimer</button>
+          <a class="btn btn--ghost" href="{% url 'me_profile' %}">Annuler</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
