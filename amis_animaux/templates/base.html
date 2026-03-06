@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Amis des Animaux{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar__inner">
+    <a class="brand" href="/">
+      <img class="brand__logo" src="{% static 'img/logo.png' %}" alt="logo">
+      <span class="brand__name">Amis Animaux</span>
+    </a>
+
+    <nav class="menu">
+      <a href="#stories">Dating Stories</a>
+      <a href="/">Accueil</a>
+      <a href="/profiles/">Profils</a>
+      <a href="#species">Espèces</a>
+      <a href="{% url 'matches_page' %}" class="nav-link">
+        Matches
+        {% if matches_badge_count > 0 %}
+          <span class="badge">{{ matches_badge_count }}</span>
+        {% endif %}
+      </a>
+      <a href="{% url 'me_profile' %}">Mon profil</a>
+    </nav>
+
+    <div class="topbar__actions">
+      {% if request.user.is_authenticated %}
+        <span class="pill">Bonjour, {{ request.user.username }}</span>
+        <a class="btn btn--ghost" href="{% url 'logout' %}">Déconnexion</a>
+      {% else %}
+        <a class="btn btn--ghost" href="{% url 'login' %}">Connexion</a>
+        <a class="btn btn--pink" href="{% url 'register' %}">Inscription</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <b>Amis des Animaux</b>
+      <div class="muted">Rencontres pour maîtres & animaux 🐾</div>
+    </div>
+    <div class="muted">© {% now "Y" %}</div>
+  </div>
+</footer>
+
+</body>
+</html>
