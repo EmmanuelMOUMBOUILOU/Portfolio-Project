@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Mon profil — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="me">
+      <div class="me__left">
+        <div class="panel">
+          <div class="panel__head">
+            <h2>Mon Profil</h2>
+            <span class="pill">👤 {{ request.user.username }}</span>
+          </div>
+
+          {% if messages %}
+            <div class="flash">
+              {% for m in messages %}
+                <div class="flash__item">{{ m }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form method="POST" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+            <div class="form__grid">
+              <div class="field">
+                <label>Âge</label>
+                {{ form.age }}
+                {% for e in form.age.errors %}<div class="err">{{ e }}</div>{% endfor %}
+              </div>
+
+              <div class="field">
+                <label>Ville</label>
+                {{ form.location }}
+                {% for e in form.location.errors %}<div class="err">{{ e }}</div>{% endfor %}
+              </div>
+
+              <div class="field field--full">
+                <label>Bio</label>
+                {{ form.bio }}
+                {% for e in form.bio.errors %}<div class="err">{{ e }}</div>{% endfor %}
+              </div>
+
+              <div class="field field--full">
+                <label>Avatar</label>
+                {{ form.avatar }}
+                {% for e in form.avatar.errors %}<div class="err">{{ e }}</div>{% endfor %}
+                <div class="muted tiny">Formats jpg/png. (En dev, MEDIA doit être configuré.)</div>
+              </div>
+            </div>
+
+            <div class="form__actions">
+              <button class="btn btn--pink" type="submit">Enregistrer</button>
+              <a class="btn btn--ghost" href="/profiles/">Voir les profils</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="me__right">
+        <div class="panel">
+          <div class="panel__head">
+            <h2>Mes Animaux</h2>
+            <a class="btn btn--blue btn--sm" href="{% url 'me_animal_add' %}">+ Ajouter</a>
+          </div>
+
+          {% if animals %}
+            <div class="pets">
+              {% for a in animals %}
+                <div class="pet">
+                  <div class="pet__img">🐾</div>
+
+                  <div style="width:100%;">
+                    <div class="pet__name">{{ a.name }}</div>
+                    <div class="muted">{{ a.species }} • {{ a.age }} ans</div>
+
+                    <!-- ✅ Boutons Modifier / Supprimer -->
+                    <div class="pet__actions">
+                      <a class="btn btn--ghost btn--sm"
+                         href="{% url 'me_animal_edit' a.id %}">
+                        Modifier
+                      </a>
+
+                      <a class="btn btn--pink btn--sm"
+                         href="{% url 'me_animal_delete' a.id %}">
+                        Supprimer
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty">
+              <h3>Aucun animal</h3>
+              <p class="muted">Ajoute ton compagnon pour apparaître dans le feed.</p>
+              <a class="btn btn--blue" href="{% url 'me_animal_add' %}">Ajouter un animal</a>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="panel panel--soft">
+          <h3>Conseil</h3>
+          <p class="muted">
+            Mets une ville + un âge + une photo : ton profil sera plus “matchable” 😉
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
