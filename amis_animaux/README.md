@@ -406,7 +406,7 @@ Possible improvements include:
 
 ---
 
-# 🏗️ Diagram
+# 🧠 Diagram
 
 ## 🗄️ Database Diagram
 
