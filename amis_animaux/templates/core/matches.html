@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Matches — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <h2>Mes demandes</h2>
+      <div class="section__line"></div>
+      <a class="btn btn--ghost btn--sm" href="/profiles/">Trouver des profils</a>
+    </div>
+
+    {% if messages %}
+      <div class="flash">
+        {% for m in messages %}
+          <div class="flash__item">{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="matches-grid">
+      <!-- RECEIVED -->
+      <div class="panel">
+        <div class="panel__head">
+          <h2>Demandes reçues</h2>
+          <span class="pill">{{ received|length }}</span>
+        </div>
+
+        {% if received %}
+          <div class="match-list">
+            {% for m in received %}
+              <div class="match-row">
+                <div class="match-row__left">
+                  <div class="match-row__avatar">🐾</div>
+                  <div>
+                    <div class="match-row__name">
+                      <b>{{ m.sender.username }}</b>
+                      <span class="muted">→ toi</span>
+                    </div>
+                    <div class="muted tiny">
+                      Statut : <b>{{ m.status }}</b> • {{ m.created_at }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="match-row__actions">
+                  {% if m.status == "pending" %}
+                    <form method="POST" action="{% url 'match_update_status' m.id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="accept" />
+                      <button class="btn btn--blue btn--sm">Accepter</button>
+                    </form>
+                    <form method="POST" action="{% url 'match_update_status' m.id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="reject" />
+                      <button class="btn btn--ghost btn--sm">Refuser</button>
+                    </form>
+                  {% else %}
+                    <a class="btn btn--ghost btn--sm" href="{% url 'profile_detail' m.sender.id %}">
+                      Voir profil
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <h3>Aucune demande reçue</h3>
+            <p class="muted">Quand quelqu’un t’envoie une demande, elle apparaîtra ici.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- SENT -->
+      <div class="panel">
+        <div class="panel__head">
+          <h2>Demandes envoyées</h2>
+          <span class="pill">{{ sent|length }}</span>
+        </div>
+
+        {% if sent %}
+          <div class="match-list">
+            {% for m in sent %}
+              <div class="match-row">
+                <div class="match-row__left">
+                  <div class="match-row__avatar">❤</div>
+                  <div>
+                    <div class="match-row__name">
+                      <span class="muted">toi →</span> <b>{{ m.receiver.username }}</b>
+                    </div>
+                    <div class="muted tiny">
+                      Statut : <b>{{ m.status }}</b> • {{ m.created_at }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="match-row__actions">
+                  <a class="btn btn--ghost btn--sm" href="{% url 'profile_detail' m.receiver.id %}">
+                    Voir profil
+                  </a>
+
+                  {% if m.status == "accepted" %}
+                    <a class="btn btn--blue btn--sm" href="{% url 'match_screen' m.id %}">
+                      Voir match
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <h3>Aucune demande envoyée</h3>
+            <p class="muted">Va sur Profils et envoie un ❤️.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
