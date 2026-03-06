@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Mon Profil — Amis des Animaux{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Mon profil</h2>
+      <p class="muted">Mets à jour ton profil et ajoute tes animaux 🐾</p>
+    </div>
+
+    <div class="profile-layout">
+
+      <!-- Colonne gauche : profil -->
+      <div class="card">
+        <h3>Infos du maître</h3>
+
+        <div class="profile-header">
+          <div class="avatar big">
+            {% if request.user.profile.avatar %}
+              <img src="{{ request.user.profile.avatar.url }}" alt="avatar">
+            {% else %}
+              <div class="avatar-fallback">🐾</div>
+            {% endif %}
+          </div>
+          <div>
+            <div class="pill">👤 {{ request.user.username }}</div>
+            <div class="tiny muted" style="margin-top:6px;">Tu peux changer ta bio, ta ville et ton avatar.</div>
+          </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="auth-form">
+          {% csrf_token %}
+
+          <label>Bio</label>
+          {{ profile_form.bio }}
+
+          <label>Ville</label>
+          {{ profile_form.location }}
+
+          <label>Avatar</label>
+          {{ profile_form.avatar }}
+
+          {% if profile_form.errors %}
+            <div class="alert">{{ profile_form.errors }}</div>
+          {% endif %}
+
+          <button class="btn btn-wide" name="save_profile" type="submit">Enregistrer</button>
+        </form>
+      </div>
+
+      <!-- Colonne droite : animaux -->
+      <div class="card">
+        <h3>Mes animaux</h3>
+
+        <form method="POST" class="auth-form" style="margin-top:10px;">
+          {% csrf_token %}
+
+          <label>Nom</label>
+          {{ animal_form.name }}
+
+          <label>Espèce</label>
+          {{ animal_form.species }}
+
+          <label>Âge</label>
+          {{ animal_form.age }}
+
+          {% if animal_form.errors %}
+            <div class="alert">{{ animal_form.errors }}</div>
+          {% endif %}
+
+          <button class="btn btn-wide" name="add_animal" type="submit">Ajouter un animal</button>
+        </form>
+
+        <div style="margin-top:14px;">
+          {% if animals %}
+            <div class="animal-list">
+              {% for a in animals %}
+                <div class="animal-item">
+                  <div>
+                    <b>{{ a.name }}</b>
+                    <div class="tiny muted">{{ a.species }} • {{ a.age }} ans</div>
+                  </div>
+                  <div class="chip">{{ a.species }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty">
+              <h3>Aucun animal</h3>
+              <p class="muted">Ajoute ton premier compagnon pour apparaître dans le feed.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
