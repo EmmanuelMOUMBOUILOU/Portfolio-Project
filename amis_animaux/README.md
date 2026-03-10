@@ -144,7 +144,6 @@ amis-des-animaux/
 - `media/` : uploaded user avatars
 - `docs/` : project documentation and diagrams
 - `config/` : Django settings and global URLs
-```
 
 ### Apps description
 
