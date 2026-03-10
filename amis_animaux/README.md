@@ -109,20 +109,41 @@ Messaging features:
 The project follows a modular Django architecture.
 
 ```
-amis-des-animaux
-│
-├── apps
-│   ├── users
-│   ├── animals
-│   ├── matches
-│   ├── messaging
-│   └── core
-│
-├── templates
-├── static
-├── media
-├── docs
-└── config
+amis-des-animaux/
+├── apps/
+│   ├── core/
+│   ├── users/
+│   ├── animals/
+│   ├── matches/
+│   └── messaging/
+├── config/
+├── templates/
+│   ├── base.html
+│   └── core/
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── img/
+├── media/
+├── docs/
+├── manage.py
+├── requirements.txt
+├── db.sqlite3
+└── README.md
+```
+
+### Project Structure
+
+- `apps/core/` : main pages, forms, context processors and template helpers
+- `apps/users/` : user profile management
+- `apps/animals/` : pet management
+- `apps/matches/` : matching system
+- `apps/messaging/` : conversations and messages
+- `templates/` : Django HTML templates
+- `static/` : CSS, JavaScript and images
+- `media/` : uploaded user avatars
+- `docs/` : project documentation and diagrams
+- `config/` : Django settings and global URLs
 ```
 
 ### Apps description
